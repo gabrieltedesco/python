@@ -16,5 +16,5 @@ for key, value in my_dict.items():
     print(key, value)
 
 #SETS
-my_set = {1, 2, 3, 1, 2}
+my_set = set([1, 2, 3, 1, 2])
 print (my_set)
