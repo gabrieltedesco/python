@@ -18,3 +18,5 @@ for key, value in my_dict.items():
 #SETS
 my_set = set([1, 2, 3, 1, 2])
 print (my_set)
+my_set2 = set([1, 2, 3, 1, 2])
+print (my_set2)
