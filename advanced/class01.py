@@ -271,7 +271,7 @@ list(my_generator2)
 
 
 #THREADING NAD MULTIPROCESSING
-'''
+"""
 Process: An instance of a program (e.g a Python interpreter)
 + Takes advantage of multiple CPUs and cores
 + Separate memory space -> Memory is not shared between processes
@@ -288,13 +288,20 @@ Threads: An entity within a process that can be scheduled (also known as "leight
 + All threads within a process share the same memory
 + Leightweight
 + Starting a thread is faster than starting a process
-Great for 10-bound tasks
-Threading is limited by GIL: Only one thread at a time
-No effect for CPU-bound tasks
-Not interruptable/killable
-Careful with race conditions
-'''
+- Great for 10-bound tasks
+- Threading is limited by GIL: Only one thread at a time
+- No effect for CPU-bound tasks
+- Not interruptable/killable
+- Careful with race conditions, when threads wants to modify the same varaible at the same time
+"""
 
-def hey():
-    print()
+from multiprocessing import Process
+import os
 
+processes = []
+number_processes = os.cpu_count()
+
+#create processes
+for i in range(number_processes):
+    p = Process(targer)
+4:02:00
