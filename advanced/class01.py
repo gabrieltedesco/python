@@ -270,8 +270,31 @@ list(my_generator2)
 
 
 
-#THREADING
+#THREADING NAD MULTIPROCESSING
+'''
+Process: An instance of a program (e.g a Python interpreter)
++ Takes advantage of multiple CPUs and cores
++ Separate memory space -> Memory is not shared between processes
++ Great for CPU-bound processing
++ New process is stated independently from other processes
++ Processes are interruptable/killable
++ One GIL for each process -> avoids GIL limitation
+- Heavyweight
+- Starting a process is slower than starting a thread.
+- More memory
+- IPC (inter-process communication) is more complicated
 
+Threads: An entity within a process that can be scheduled (also known as "leightweight process) A process can spawn multiple threads.
++ All threads within a process share the same memory
++ Leightweight
++ Starting a thread is faster than starting a process
+Great for 10-bound tasks
+Threading is limited by GIL: Only one thread at a time
+No effect for CPU-bound tasks
+Not interruptable/killable
+Careful with race conditions
+'''
 
-
+def hey():
+    print()
 
