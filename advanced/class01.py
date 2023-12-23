@@ -303,5 +303,5 @@ number_processes = os.cpu_count()
 
 #create processes
 for i in range(number_processes):
-    p = Process(targer)
+    p = Process(target=)
 4:02:00
