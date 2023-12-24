@@ -270,7 +270,7 @@ list(my_generator2)
 
 
 
-#THREADING NAD MULTIPROCESSING
+#THREADING AND MULTIPROCESSING
 """
 Process: An instance of a program (e.g a Python interpreter)
 + Takes advantage of multiple CPUs and cores
@@ -284,7 +284,7 @@ Process: An instance of a program (e.g a Python interpreter)
 - More memory
 - IPC (inter-process communication) is more complicated
 
-Threads: An entity within a process that can be scheduled (also known as "leightweight process) A process can spawn multiple threads.
+Threads: An entity within a process that can be scheduled (also known as leightweight process) A process can spawn multiple threads.
 + All threads within a process share the same memory
 + Leightweight
 + Starting a thread is faster than starting a process
@@ -295,13 +295,279 @@ Threads: An entity within a process that can be scheduled (also known as "leight
 - Careful with race conditions, when threads wants to modify the same varaible at the same time
 """
 
+
+
+#MULTIPROCESSING
+#example 1
 from multiprocessing import Process
 import os
+def square_numbers():
+    for i in range(100):
+        i*i
 
 processes = []
 number_processes = os.cpu_count()
 
 #create processes
 for i in range(number_processes):
-    p = Process(target=)
-4:02:00
+    p = Process(target=square_numbers)
+    processes.append(p)
+
+#start
+for p in processes:
+    p.start()
+
+#join
+for p in processes:
+    p.join()
+
+print("end main")
+
+
+#example 2
+from multiprocessing import Process, Value, Array, Lock
+import time
+
+def add100(number, lock):    
+    for i in range(100):
+        time.sleep(0.01)
+        with lock:
+            number.value += 1 #some operation can get lost here because of race conditions
+            #this is the process to share a single value
+
+if __name__ == "__main__":
+    lock = Lock()
+    shared_number = Value('i', 0)
+    print(f"number at the beginnig is {shared_number.value}")
+
+    #create processes and assign a function
+    p1 = Process(target=add100, args=(shared_number, lock))
+    p2 = Process(target=add100, args=(shared_number, lock))
+
+    #start all processes
+    p1.start()
+    p2.start()
+
+    #wait all the processes to finish by blocking the main program
+    #join 
+    p1.join()
+    p2.join()
+
+    print(f"number at end is {shared_number.value}")
+    print("end main")
+
+#in multithreading, you can share data with a global variable because they live in the same memory space. in multiprocessing, they need special shared memory to share data
+#there are two shared memory objects: value and array
+
+
+#example 3
+from multiprocessing import Process, Value, Array, Lock
+import time
+
+def add100(numbers, lock):    
+    for i in range(100):
+        time.sleep(0.01)
+        with lock:
+            for i in range(len(numbers)):
+                numbers[i] += 1
+                #this is the process to share a multiple value
+                #increasing each number by 200
+
+if __name__ == "__main__":
+    lock = Lock()
+    shared_array = Array('d', [0.0, 100.0, 200.0])
+    print(f"array at the beginnig is {shared_array[:]}")
+
+    #create processes and assign a function
+    p1 = Process(target=add100, args=(shared_array, lock))
+    p2 = Process(target=add100, args=(shared_array, lock))
+
+    #start all processes
+    p1.start()
+    p2.start()
+
+    #wait all the processes to finish by blocking the main program
+    #join 
+    p1.join()
+    p2.join()
+
+    print(f"array at the end is {shared_array[:]}")
+    print("end main")
+
+#in multithreading, you can share data with a global variable because they live in the same memory space. in multiprocessing, they need special shared memory to share data
+#there are two shared memory objects: value and array
+
+
+#example 4
+from multiprocessing import Process
+from multiprocessing import Queue
+import time
+
+def square(numbers, queue):
+    for i in numbers:
+        queue.put(i*i)
+
+def make_negative(numbers, queue):
+    for i in numbers:
+        queue.put(-1*i)
+
+if __name__ == "__main__":
+    
+    numbers = range(1, 6)
+    my_queue = Queue()
+    p1 = Process(target=square, args=(numbers, my_queue))
+    p2 = Process(target=make_negative, args=(numbers, my_queue))
+
+    p1.start()
+    p2.start()
+
+    p1.join()
+    p2.join()
+    #there is no method queue.join()
+    while not my_queue.empty():
+        print(my_queue.get())
+
+
+#you can also use a queue to exchange elements between processes
+#it works the same way in multiprocessing and multithreading
+#the module used is not "queue", but "multiprocessing"
+
+
+#example 5
+from multiprocessing import Pool
+
+def cube(number):
+    return number**3
+
+if __name__ == "__main__":
+    
+    numbers = range(10)
+    my_pool = Pool()
+    #we want to create multiple processes that should acess or execute a function
+    #the methods are: map, apply, join, close
+    result = my_pool.map(cube, numbers)
+    #automatically allocate the maximum number of available processes and create different processes that your machine can run, and then split this itrable into an equal sized chunks and submit this to the function in parallel
+    #pool.apply(cube, numbers[0]) makes the same process, but for only one number to the function
+    my_pool.close()
+    my_pool.join()
+
+    print(result)
+
+#also there is "process pool" to manage multiple process
+#So a process pool object controls a pool of worker processes to which chops can be submitted.
+#basically, a pool takes care of a lot of things for you
+#if you have interest, there are also asynchronous calls to this map and apply functions 
+
+
+
+#THREADING
+#example 1
+from threading import Thread
+
+#sharing data
+database_value = 0
+
+def square_numbers2():
+    for i in range(100):
+        i*i
+
+threads = [] 
+number_threads = os.cpu_count()
+
+#create threads
+for i in range(number_threads):
+    t = Thread(target=square_numbers2)
+    threads.append(t)
+
+#start
+for t in threads:
+    t.start()
+
+#join
+for t in threads:
+    t.join()
+
+print("end main")
+
+
+#example 2
+from threading import Thread, Lock
+import time
+
+database_value = 0
+
+def increase(lock):
+    global database_value
+
+    with lock:
+        local_copy = database_value
+    #processing
+        local_copy +=1
+        time.sleep(0.1) #this line allows race condition, that is solved by locking the state of thread 1 until it modifies the database_value
+        database_value = local_copy
+
+
+if __name__ == "__main__":
+    lock = Lock()
+    print("start value", database_value)
+
+    thread1 = Thread(target=increase, args=(lock,))
+    thread2 = Thread(target=increase, args=(lock,))
+    thread1.start()
+    thread2.start()
+    thread1.join()
+    thread2.join()
+
+    print('end value', database_value)
+    print("end main")
+
+
+#example 3
+from threading import Thread, Lock, current_thread
+from queue import Queue
+import time
+
+def worker(n_queue, lock):
+    while True:
+        value = my_queue.get()
+        #processing
+        with lock:
+            print(f'in {current_thread().name} got {value}')
+        my_queue.task_done()
+
+if __name__ == "__main__":
+
+    my_queue = Queue()
+    lock = Lock()
+    num_threads = 10
+    for i in range(num_threads):
+        thread = Thread(target=worker, args=(my_queue, lock))
+        thread.daemon = True #used to stop all the threads when the main thread die
+        thread.start()
+    
+    for i in range(1, 21):
+        my_queue.put(i)
+    my_queue.join()
+
+
+    print("end main")
+
+
+#if you use my_queue.put(), you add a new element to the queue
+#if you use my_queue.get(), the first element of the queue is removed
+#if you use my_queue.join(), this blocks until all items in the queue have been processed
+
+
+
+#FUCTIONS ARGUMENTS
+#function arguments and function parameters 
+"""
+- The difference between arguments and parameters
+- Positional and keyword arguments
+- Default arguments
+- Variable-length arguments (*args and **kwargs)
+- Container unpacking into function arguments
+- Local vs. global arguments
+- Parameter passing (by value or by reference?)
+"""
+#4:53:00
