@@ -562,12 +562,92 @@ if __name__ == "__main__":
 #FUCTIONS ARGUMENTS
 #function arguments and function parameters 
 """
-- The difference between arguments and parameters
-- Positional and keyword arguments
-- Default arguments
-- Variable-length arguments (*args and **kwargs)
-- Container unpacking into function arguments
-- Local vs. global arguments
-- Parameter passing (by value or by reference?)
+- The difference between arguments (values passed for these parameters while calling a function) and parameters (used inside parentheses where definig a function)
+- Positional (func(1, 2, 3)) and keyword arguments (func(a=1, b=2, c=3)) when calling a function
+- Default arguments when defining a function (def func(a, b, c, d=4))
+- Variable-length arguments (*args and **kwargs) when defining a function (def func(a, b, c, *args, **kwargs)), that args are in a tuple and kwags are in a dictionary. a example is (func(1, 2, 3, 4, 5, six=6, seven=7))
+- Container unpacking into function arguments when the arguments required to a function is inside a list, like my_list = [1, 2, 3], so the calling of the function is func(*my_list)
+- Local vs. global arguments is where that variable can be acessed and modified, functions, by defalut, have local scope variables. but mutable objects, like a list, can be modified inside a function
 """
-#4:53:00
+
+
+
+#DEEP COPYING
+#you have to take care when making copies of variables, because immutable types can works fine, but mutable types references the same value
+#shallow copy: one level deep, only references of nested child objects, can be done with: var.copy(), list(var), var[:]
+#deep copy: full independent copy, can be done with: 
+import copy
+org = [[0, 1, 2, 3, 4], [5, 6, 7, 8, 9]]
+cpy = copy.deepcopy(org)
+cpy [0][1] = -10
+print(cpy)
+print(org)
+#this is necessary in nested lists, that are two levels deep
+#it can also be used for objects
+import copy
+class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+class Company:
+    def __init__(self, boss, employee): 
+        self.boss = boss
+        self.employee = employee
+
+p1 = Person('Alex', 55)
+p2 = Person('Joe', 27)
+company = Company (p1, p2)
+
+company_clone = copy.deepcopy(company)
+company_clone.boss.age = 56
+print(company_clone.boss.age) 
+print(company.boss.age)
+
+
+
+#CONTEXT MANAGER
+#they allow you to allocate and release resources when you want to
+with open('notes.txt', 'w') as file:
+    file.write('hello world')
+#the with statement (context manager) will sure to correctly close our file again, and this avoids a code like this:
+file open('notes.txt', 'w')
+try:
+    file.write('some todoo...')
+finally:
+    file.close()
+#in general, context manager can be used to open/close databases and with "lock" method in threads. also, to implement in your own classes, we have to implement the "enter" and "exit" methods:
+class ManagedFile():
+    def __init__(self, filename):
+        self.filename = filename
+
+    def __enter__(self):
+        print('enter')
+        self.file = open(self.filename, 'w')
+        return self.file
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self.file:
+            self.file.close()
+        if exc_type is not None:
+            print('exception has been handled')
+        print('exit')
+        return True
+
+with ManagedFile('notes.txt') as file:
+    print('doing something')
+    file.write('hello world')
+    file.somemethod() #this doesn't work, it just raises an exception
+
+print('continuing...')
+
+
+
+#POO 
+#https://youtu.be/Ej_02ICOIgs
+#PYTORCH
+#https://www.youtube.com/playlist?list=PLWKjhJtqVAbm5dir5TLEy2aZQMG7cHEZp
+#COMPUTER VISION
+#https://youtu.be/01sAkU_NvOY
+#always use python roadmap to guide your studies
+
+
