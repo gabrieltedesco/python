@@ -646,6 +646,8 @@ print('continuing...')
 #https://youtu.be/Ej_02ICOIgs
 #PYTORCH
 #https://www.youtube.com/playlist?list=PLWKjhJtqVAbm5dir5TLEy2aZQMG7cHEZp
+#TENSOR FLOW
+#https://youtu.be/tPYj3fFJGjk?list=PLWKjhJtqVAblStefaz_YOVpDWqcRScc2s
 #COMPUTER VISION
 #https://youtu.be/01sAkU_NvOY
 #always use python roadmap to guide your studies
