@@ -1,4 +1,4 @@
-from advanced.class02.class02_item import Item
+from class02_item import Item
 
 #creating a separated class that inherit the functionalities
 class Phone(Item):
