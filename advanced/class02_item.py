@@ -13,12 +13,29 @@ class Item:
         assert quantity >= 0, f'Quantity {quantity} is not greater than zero'
 
         #Assign to sefl object
-        self.name = name
+        self.__name = name
         self.price = price
         self.quantity = quantity
 
         #Actions to execute
         Item.all.append(self)
+
+    #Getters and Setters
+    #property decorator: read-only attribute
+    #so you can create a new attribute "set" to change the name
+    @property
+    def name(self):
+        print('You are trying to get name')
+        return self.__name
+    
+    @name.setter
+    def name(self, value):
+        print('You are trying to set name')
+        #with this space to code, you can restrict types of name with "if" statements and raise Exceptions
+        if len(value) > 10:
+            raise NameError("The name is too long")
+        else:
+            self.__name = value
 
     def total_price(self):
         return print(self.price*self.quantity)
